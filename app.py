@@ -173,11 +173,11 @@ def main():
                     with st.spinner("✨ Generating your masterpiece... This might take a minute."):
                         try:
                             output = replicate.run(
-                                "fofr/flux-diffusion:d5e058608f43c2566761b3c3f6f3c7397f1b7bc00289a058c4f42c21ec9ccd5b",
+                                "lucataco/flux:68db6410a51701afd205cc60552a8090853040ae15c375ee4a58160e14847f55",
                                 input={
                                     "prompt": prompt,
-                                    "num_inference_steps": 50,
-                                    "guidance_scale": 7.5,
+                                    "max_inference_steps": 50,
+                                    "guidance_scale": 9,
                                 }
                             )
 
