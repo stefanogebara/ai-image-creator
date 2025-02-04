@@ -175,8 +175,12 @@ def main():
                 if prompt:
                     with st.spinner("✨ Generating your masterpiece... This might take a minute."):
                         try:
+                            # Debug information
+                            st.write("Starting generation...")
+                            st.write("Using Replicate token:", os.environ.get('REPLICATE_API_TOKEN'))
+
                             output = replicate.run(
-                                "black-forest-labs/flux-1.1-pro",
+                                "black-forest-labs/flux-1.1-pro:34c1584e0a05ff1737a8fd21b0437913dee23e55648c8c3438e32a6776816c52",
                                 input={
                                     "prompt": prompt,
                                     "width": 1024,
@@ -188,6 +192,8 @@ def main():
                                 }
                             )
 
+                            st.write("Generation output:", output)
+
                             if output and isinstance(output, list) and len(output) > 0:
                                 image_url = output[0]
                                 img = load_image_from_url(image_url)
@@ -196,8 +202,13 @@ def main():
                                     save_generation(st.session_state.user_id, image_url, prompt)
                                     st.success("✨ Image generated successfully!")
                                     st.rerun()
+                            else:
+                                st.error("No output received from the model")
+
                         except Exception as e:
-                            st.error(f"Error generating image: {str(e)}")
+                            st.error("Full error details:")
+                            st.error(str(e))
+                            st.error("Type of error:", type(e).__name__)
                 else:
                     st.warning("Please enter a prompt first!")
 
