@@ -13,6 +13,9 @@ supabase = create_client(
     os.getenv('SUPABASE_KEY')
 )
 
+# Configurar Replicate API Token explicitamente
+os.environ['REPLICATE_API_TOKEN'] = os.getenv('REPLICATE_API_TOKEN')
+
 # Configurar o estado da sessão
 if 'logged_in' not in st.session_state:
     st.session_state.logged_in = False
@@ -172,8 +175,11 @@ def main():
                 if prompt:
                     with st.spinner("✨ Generating your masterpiece... This might take a minute."):
                         try:
+                            # Print the Replicate API token (apenas para debug)
+                            st.write(f"Using Replicate token: {os.environ.get('REPLICATE_API_TOKEN')}")
+
                             output = replicate.run(
-                                "kandinsky-community/flux:c33b7c946cf9891b18950fb906c485456a07909d60ad1ca2fec8b2b6cd4ebf74",
+                                "tensorworkshop/flux:7225de281f5dccad89df7c31d01857a41e6c0960431885d350c6ceb706582d31",
                                 input={
                                     "prompt": prompt,
                                     "num_inference_steps": 50,
@@ -192,6 +198,9 @@ def main():
                                     st.rerun()
                         except Exception as e:
                             st.error(f"Error generating image: {str(e)}")
+                            # Adicionar mais informações de debug
+                            st.error("Full error details:")
+                            st.error(str(e))
                 else:
                     st.warning("Please enter a prompt first!")
 
