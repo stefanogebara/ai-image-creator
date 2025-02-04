@@ -175,16 +175,16 @@ def main():
                 if prompt:
                     with st.spinner("✨ Generating your masterpiece... This might take a minute."):
                         try:
-                            # Print the Replicate API token (apenas para debug)
-                            st.write(f"Using Replicate token: {os.environ.get('REPLICATE_API_TOKEN')}")
-
                             output = replicate.run(
-                                "tensorworkshop/flux:7225de281f5dccad89df7c31d01857a41e6c0960431885d350c6ceb706582d31",
+                                "black-forest-labs/flux-1.1-pro",
                                 input={
                                     "prompt": prompt,
-                                    "num_inference_steps": 50,
-                                    "guidance_scale": 9.0,
-                                    "negative_prompt": "ugly, blurry, poor quality, deformed"
+                                    "width": 1024,
+                                    "height": 1024,
+                                    "output_format": "webp",
+                                    "output_quality": 100,
+                                    "safety_tolerance": 2,
+                                    "aspect_ratio": "1:1"
                                 }
                             )
 
@@ -198,9 +198,6 @@ def main():
                                     st.rerun()
                         except Exception as e:
                             st.error(f"Error generating image: {str(e)}")
-                            # Adicionar mais informações de debug
-                            st.error("Full error details:")
-                            st.error(str(e))
                 else:
                     st.warning("Please enter a prompt first!")
 
