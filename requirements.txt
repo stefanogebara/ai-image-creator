@@ -1,0 +1,6 @@
+streamlit
+replicate
+supabase
+Pillow
+requests
+python-dotenv
