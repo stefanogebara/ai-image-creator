@@ -173,11 +173,12 @@ def main():
                     with st.spinner("✨ Generating your masterpiece... This might take a minute."):
                         try:
                             output = replicate.run(
-                                "lucataco/flux:68db6410a51701afd205cc60552a8090853040ae15c375ee4a58160e14847f55",
+                                "kandinsky-community/flux:c33b7c946cf9891b18950fb906c485456a07909d60ad1ca2fec8b2b6cd4ebf74",
                                 input={
                                     "prompt": prompt,
-                                    "max_inference_steps": 50,
-                                    "guidance_scale": 9,
+                                    "num_inference_steps": 50,
+                                    "guidance_scale": 9.0,
+                                    "negative_prompt": "ugly, blurry, poor quality, deformed"
                                 }
                             )
 
