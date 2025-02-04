@@ -180,15 +180,15 @@ def main():
                             st.write("Using Replicate token:", os.environ.get('REPLICATE_API_TOKEN'))
 
                             output = replicate.run(
-                                "black-forest-labs/flux-1.1-pro:34c1584e0a05ff1737a8fd21b0437913dee23e55648c8c3438e32a6776816c52",
+                                "stability-ai/sdxl:39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b",
                                 input={
                                     "prompt": prompt,
+                                    "negative_prompt": "blurry, ugly, deformed",
                                     "width": 1024,
                                     "height": 1024,
-                                    "output_format": "webp",
-                                    "output_quality": 100,
-                                    "safety_tolerance": 2,
-                                    "aspect_ratio": "1:1"
+                                    "num_inference_steps": 50,
+                                    "num_outputs": 1,
+                                    "guidance_scale": 7.5
                                 }
                             )
 
