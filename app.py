@@ -180,15 +180,13 @@ def main():
                             st.write("Using Replicate token:", os.environ.get('REPLICATE_API_TOKEN'))
 
                             output = replicate.run(
-                                "stability-ai/sdxl:39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b",
+                                "lucataco/flux:68db6410a51701afd205cc60552a8090853040ae15c375ee4a58160e14847f55",
                                 input={
                                     "prompt": prompt,
-                                    "negative_prompt": "blurry, ugly, deformed",
-                                    "width": 1024,
-                                    "height": 1024,
-                                    "num_inference_steps": 50,
-                                    "num_outputs": 1,
-                                    "guidance_scale": 7.5
+                                    "max_inference_steps": 50,
+                                    "scheduler": "K_EULER_ANCESTRAL",
+                                    "guidance_scale": 8.5,
+                                    "negative_prompt": "ugly, blurry, distorted, deformed"
                                 }
                             )
 
@@ -218,7 +216,7 @@ def main():
                 try:
                     img = load_image_from_url(st.session_state.last_image)
                     if img:
-                        st.image(img, use_column_width=True)
+                        st.image(img, use_container_width=True)
                 except Exception as e:
                     st.error(f"Error displaying latest image: {str(e)}")
 
