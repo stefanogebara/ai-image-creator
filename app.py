@@ -179,10 +179,10 @@ def main():
                             st.write("Starting generation...")
 
                             output = replicate.run(
-                                "bytedance/flux:e55d42341d9ea590545bed13cc9eb77352d2e459c1748ec5f56007bf56552762",
+                                "black-forest-labs/flux-schnell",
                                 input={
                                     "prompt": prompt,
-                                    "num_inference_steps": 50,
+                                    "num_inference_steps": 25,  # Lower steps for faster generation
                                     "guidance_scale": 7.5,
                                     "negative_prompt": "ugly, deformed, broken, blurry, bad quality, distorted",
                                     "width": 768,
