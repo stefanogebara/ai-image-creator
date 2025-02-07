@@ -177,16 +177,14 @@ def main():
                         try:
                             # Debug information
                             st.write("Starting generation...")
-                            st.write("Using Replicate token:", os.environ.get('REPLICATE_API_TOKEN'))
 
                             output = replicate.run(
-                                "lucataco/flux:68db6410a51701afd205cc60552a8090853040ae15c375ee4a58160e14847f55",
+                                "fofr/flux:9ca13f05a8591e2f05b61a4f21c7cb3444f1dd18e40ce944fd804bf4fc7c5f04",
                                 input={
                                     "prompt": prompt,
-                                    "max_inference_steps": 50,
-                                    "scheduler": "K_EULER_ANCESTRAL",
-                                    "guidance_scale": 8.5,
-                                    "negative_prompt": "ugly, blurry, distorted, deformed"
+                                    "num_inference_steps": 50,
+                                    "guidance_scale": 7.0,
+                                    "negative_prompt": "ugly, blurry, bad quality, deformed",
                                 }
                             )
 
