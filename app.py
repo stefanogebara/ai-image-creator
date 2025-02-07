@@ -232,7 +232,7 @@ def main():
                     try:
                         img = load_image_from_url(generation['image_link'])
                         if img:
-                            st.image(img, use_column_width=True)
+                            st.image(img, use_container_width=True)
                             with st.expander("📝 Image Details"):
                                 st.markdown(f"**Prompt:** {generation['prompt_used']}")
                                 st.markdown(f"**Created:** {format_date(generation['created_at'])}")
