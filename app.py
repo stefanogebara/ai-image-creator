@@ -39,21 +39,35 @@ def save_generation(user_id, image_link, prompt_used):
             "image_link": image_link,
             "prompt_used": prompt_used
         }
+        st.write("Debug - Data being sent to Supabase:", data)
+
+        # Try direct SQL query first to verify table
+        try:
+            table_check = supabase.table('generations').select("count").execute()
+            st.write("Debug - Table check:", table_check)
+        except Exception as table_error:
+            st.error(f"Table check error: {str(table_error)}")
 
         # Add error handling for the actual database insert
         try:
             result = supabase.table('generations').insert(data).execute()
-            st.write("Debug - Supabase response:", result)
+            st.write("Debug - Full Supabase insert response:", result)
+
+            # Verify the insert worked by immediately querying
+            verify = supabase.table('generations').select("*").eq('user_id', user_id).execute()
+            st.write("Debug - Verification query:", verify)
+
             return True
         except Exception as db_error:
-            st.error(f"Database error: {str(db_error)}")
-            st.error("Full error details:", db_error.__dict__)
+            st.error(f"Database insert error: {str(db_error)}")
+            st.error(f"Error type: {type(db_error).__name__}")
+            if hasattr(db_error, 'response'):
+                st.error(f"Response: {db_error.response}")
             return False
 
     except Exception as e:
         st.error(f"General error in save_generation: {str(e)}")
-        st.error(f"Error type: {type(e)}")
-        st.error(f"Error details: {e.__dict__}")
+        st.error(f"Error type: {type(e).__name__}")
         return False
 
 
