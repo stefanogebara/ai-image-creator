@@ -42,12 +42,9 @@ def save_generation(user_id, image_link, prompt_used):
 def get_user_generations(user_id):
     """Get user's generation history"""
     try:
-        st.write("Debug - Fetching generations for user:", user_id)
         response = supabase.table('generations').select("*").eq('user_id', user_id).order('created_at.desc').execute()
-        st.write("Debug - Fetch response:", response)
         return response.data
     except Exception as e:
-        st.error(f"Error fetching generations: {str(e)}")
         return []
 
 
