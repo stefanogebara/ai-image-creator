@@ -56,11 +56,16 @@ def login(username, password):
 def save_generation(user_id, image_link, prompt_used):
     """Save generated image info to database"""
     try:
-        supabase.table('generations').insert({
+        st.write("Saving with user_id:", user_id)
+        st.write("Image link:", image_link)
+
+        result = supabase.table('generations').insert({
             "user_id": user_id,
             "image_link": image_link,
             "prompt_used": prompt_used
         }).execute()
+
+        st.write("Save result:", result)
         return True
     except Exception as e:
         st.error(f"Error saving generation: {str(e)}")
@@ -182,7 +187,7 @@ def main():
                                 "black-forest-labs/flux-schnell",
                                 input={
                                     "prompt": prompt,
-                                    "num_inference_steps": 4,  # Must be 4 or less for Flux Schnell
+                                    "num_inference_steps": 4,
                                     "guidance_scale": 7.5,
                                     "negative_prompt": "ugly, deformed, broken, blurry, bad quality, distorted"
                                 }
@@ -192,11 +197,17 @@ def main():
 
                             if output and isinstance(output, list) and len(output) > 0:
                                 image_url = output[0]
+                                st.write("Image URL:", image_url)
+
                                 img = load_image_from_url(image_url)
                                 if img:
                                     st.session_state.last_image = image_url
-                                    save_generation(st.session_state.user_id, image_url, prompt)
-                                    st.success("✨ Image generated successfully!")
+                                    st.write("Attempting to save to database...")
+                                    save_success = save_generation(st.session_state.user_id, image_url, prompt)
+                                    if save_success:
+                                        st.success("✨ Image generated and saved successfully!")
+                                    else:
+                                        st.error("Image generated but failed to save to database")
                                     st.rerun()
                             else:
                                 st.error("No output received from the model")
