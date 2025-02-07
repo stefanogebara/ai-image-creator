@@ -182,11 +182,9 @@ def main():
                                 "black-forest-labs/flux-schnell",
                                 input={
                                     "prompt": prompt,
-                                    "num_inference_steps": 25,  # Lower steps for faster generation
+                                    "num_inference_steps": 4,  # Must be 4 or less for Flux Schnell
                                     "guidance_scale": 7.5,
-                                    "negative_prompt": "ugly, deformed, broken, blurry, bad quality, distorted",
-                                    "width": 768,
-                                    "height": 768
+                                    "negative_prompt": "ugly, deformed, broken, blurry, bad quality, distorted"
                                 }
                             )
 
