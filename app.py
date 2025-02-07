@@ -6,6 +6,7 @@ import requests
 from PIL import Image
 from io import BytesIO
 from datetime import datetime
+import time
 
 # Configuração das credenciais via environment variables
 supabase = create_client(
@@ -23,6 +24,49 @@ if 'user_id' not in st.session_state:
     st.session_state.user_id = None
 if 'username' not in st.session_state:
     st.session_state.username = None
+
+
+def save_generation(user_id, image_link, prompt_used):
+    """Save generated image info to database"""
+    try:
+        st.write("Debug - Saving generation with:")
+        st.write(f"User ID: {user_id}")
+        st.write(f"Image Link: {image_link}")
+        st.write(f"Prompt: {prompt_used}")
+
+        data = {
+            "user_id": user_id,
+            "image_link": image_link,
+            "prompt_used": prompt_used
+        }
+
+        # Add error handling for the actual database insert
+        try:
+            result = supabase.table('generations').insert(data).execute()
+            st.write("Debug - Supabase response:", result)
+            return True
+        except Exception as db_error:
+            st.error(f"Database error: {str(db_error)}")
+            st.error("Full error details:", db_error.__dict__)
+            return False
+
+    except Exception as e:
+        st.error(f"General error in save_generation: {str(e)}")
+        st.error(f"Error type: {type(e)}")
+        st.error(f"Error details: {e.__dict__}")
+        return False
+
+
+def get_user_generations(user_id):
+    """Get user's generation history"""
+    try:
+        st.write("Debug - Fetching generations for user:", user_id)
+        response = supabase.table('generations').select("*").eq('user_id', user_id).order('created_at.desc').execute()
+        st.write("Debug - Fetch response:", response)
+        return response.data
+    except Exception as e:
+        st.error(f"Error fetching generations: {str(e)}")
+        return []
 
 
 def create_account(username, password):
@@ -51,35 +95,6 @@ def login(username, password):
         return False, "Invalid credentials"
     except Exception as e:
         return False, str(e)
-
-
-def save_generation(user_id, image_link, prompt_used):
-    """Save generated image info to database"""
-    try:
-        st.write("Saving with user_id:", user_id)
-        st.write("Image link:", image_link)
-
-        result = supabase.table('generations').insert({
-            "user_id": user_id,
-            "image_link": image_link,
-            "prompt_used": prompt_used
-        }).execute()
-
-        st.write("Save result:", result)
-        return True
-    except Exception as e:
-        st.error(f"Error saving generation: {str(e)}")
-        return False
-
-
-def get_user_generations(user_id):
-    """Get user's generation history"""
-    try:
-        response = supabase.table('generations').select("*").eq('user_id', user_id).order('created_at.desc').execute()
-        return response.data
-    except Exception as e:
-        st.error(f"Error fetching generations: {str(e)}")
-        return []
 
 
 def load_image_from_url(url):
@@ -132,6 +147,7 @@ def main():
     with st.sidebar:
         if st.session_state.logged_in:
             st.markdown(f"### 👋 Welcome, {st.session_state.username}!")
+            st.write("Debug - Current user ID:", st.session_state.user_id)
             if st.button("🚪 Logout", key="logout"):
                 st.session_state.logged_in = False
                 st.session_state.user_id = None
@@ -182,6 +198,7 @@ def main():
                         try:
                             # Debug information
                             st.write("Starting generation...")
+                            st.write("Current user ID:", st.session_state.user_id)
 
                             output = replicate.run(
                                 "black-forest-labs/flux-schnell",
@@ -199,16 +216,26 @@ def main():
                                 image_url = output[0]
                                 st.write("Image URL:", image_url)
 
+                                # Try to load the image
                                 img = load_image_from_url(image_url)
                                 if img:
                                     st.session_state.last_image = image_url
-                                    st.write("Attempting to save to database...")
+                                    st.write("Image loaded successfully, attempting to save...")
+
+                                    # Try to save to database
                                     save_success = save_generation(st.session_state.user_id, image_url, prompt)
+
                                     if save_success:
                                         st.success("✨ Image generated and saved successfully!")
+                                        # Check what's in the database right after saving
+                                        generations = get_user_generations(st.session_state.user_id)
+                                        st.write("Current generations in database:", generations)
+                                        time.sleep(1)  # Wait a bit before reloading
+                                        st.rerun()
                                     else:
-                                        st.error("Image generated but failed to save to database")
-                                    st.rerun()
+                                        st.error("Failed to save to database. Check the error messages above.")
+                                else:
+                                    st.error("Failed to load the generated image")
                             else:
                                 st.error("No output received from the model")
 
