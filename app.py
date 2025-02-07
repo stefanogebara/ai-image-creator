@@ -179,12 +179,14 @@ def main():
                             st.write("Starting generation...")
 
                             output = replicate.run(
-                                "fofr/flux:9ca13f05a8591e2f05b61a4f21c7cb3444f1dd18e40ce944fd804bf4fc7c5f04",
+                                "bytedance/flux:e55d42341d9ea590545bed13cc9eb77352d2e459c1748ec5f56007bf56552762",
                                 input={
                                     "prompt": prompt,
                                     "num_inference_steps": 50,
-                                    "guidance_scale": 7.0,
-                                    "negative_prompt": "ugly, blurry, bad quality, deformed",
+                                    "guidance_scale": 7.5,
+                                    "negative_prompt": "ugly, deformed, broken, blurry, bad quality, distorted",
+                                    "width": 768,
+                                    "height": 768
                                 }
                             )
 
