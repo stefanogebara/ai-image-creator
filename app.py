@@ -227,7 +227,8 @@ def main():
                             st.write("Generation output:", output)
 
                             if output and isinstance(output, list) and len(output) > 0:
-                                image_url = output[0]
+                                # Convert the FileOutput object to a string URL
+                                image_url = str(output[0])
                                 st.write("Image URL:", image_url)
 
                                 # Try to load the image
